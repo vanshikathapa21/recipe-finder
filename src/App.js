@@ -1,24 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Favorites from "./pages/Favorites";
+import { useState } from "react";
+import Navbar from "./components/Navbar";
+import "./styles/main.css";
 
 function App() {
+
+  const [darkMode, setDarkMode] = useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+
+      <div className={darkMode ? "dark" : "light"}>
+
+        <Navbar />
+
+        <button onClick={() => setDarkMode(!darkMode)}>
+          Toggle Mode
+        </button>
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/favorites" element={<Favorites />} />
+        </Routes>
+
+      </div>
+
+    </BrowserRouter>
   );
 }
 
