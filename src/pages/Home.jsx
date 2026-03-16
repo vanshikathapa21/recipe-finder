@@ -29,22 +29,16 @@ function Home() {
 
     if (ingredients.length === 0) return;
 
-    const result = await getRecipes([ingredients[0]]);
+    const result = await getRecipes(ingredients);
 
-    const filteredRecipes = result.filter(recipe =>
-      ingredients.some(ing =>
-        recipe.title.toLowerCase().includes(ing)
-      )
-    );
-
-    setRecipes(filteredRecipes.length ? filteredRecipes : result);
+    setRecipes(result);
 
   } catch (err) {
     setError("Something went wrong");
   }
 
   setLoading(false);
-} 
+}
 
 async function handleSelectRecipe(id) {
   try {
@@ -61,13 +55,20 @@ async function handleSelectRecipe(id) {
 
 function addToFavorites(recipe) {
 
-  const updatedFavorites = [...favorites, recipe];
+  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
-  setFavorites(updatedFavorites);
+  const exists = favorites.find(item => item.id === recipe.id);
 
-  localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+  if (!exists) {
+    favorites.push(recipe);
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+    alert("Recipe added to favorites");
+  } else {
+    alert("Already in favorites");
+  }
 
 }
+
   return (
     <div>
 
@@ -98,7 +99,7 @@ function addToFavorites(recipe) {
 
           {recipes.map((recipe) => (
             <RecipeCard
-              key={recipe.idMeal}
+              key={recipe.id}
               recipe={recipe}
               onSelect={handleSelectRecipe}
               addToFavorites={addToFavorites}

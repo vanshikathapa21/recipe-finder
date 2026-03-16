@@ -1,19 +1,14 @@
 function RecipeCard({ recipe, onSelect, addToFavorites }) {
-
   return (
     <div className="recipe-card">
 
-      <img
-        src={recipe.image}
-        alt={recipe.title}
-        className="recipe-img"
-      />
+      <img src={recipe.image} alt={recipe.title} />
 
       <h3>{recipe.title}</h3>
 
       <button onClick={() => onSelect(recipe.id)}>
-  View Recipe
-</button>
+        View Recipe
+      </button>
 
       <button onClick={() => addToFavorites(recipe)}>
         ❤️ Favorite

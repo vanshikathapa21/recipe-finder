@@ -1,25 +1,17 @@
-export async function getRecipes(ingredients){
+export async function getRecipes(ingredients) {
 
   const query = ingredients.join(",");
 
   const response = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/filter.php?i=${query}`
+    `http://localhost:5000/recipes?ingredients=${query}`
   );
 
   const data = await response.json();
 
-  if(!data.meals){
-    return [];
-  }
-
-  return data.meals.map(meal => ({
-    id: meal.idMeal,
-    title: meal.strMeal,
-    image: meal.strMealThumb
-  }));
+  return data; 
 }
 
-export async function getRecipeDetails(id){
+export async function getRecipeDetails(id) {
 
   const response = await fetch(
     `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`

@@ -1,31 +1,65 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import RecipeCard from "../components/RecipeCard";
 
 function Favorites() {
 
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem("favorites");
-
-    if (saved) {
-      setFavorites(JSON.parse(saved));
-    }
+    const saved = JSON.parse(localStorage.getItem("favorites")) || [];
+    setFavorites(saved);
   }, []);
 
+  function removeFavorite(id) {
+
+  const updated = favorites.filter((item) => item.id !== id);
+
+  setFavorites(updated);
+
+  localStorage.setItem("favorites", JSON.stringify(updated));
+
+}
+
   return (
-    <div>
-      <h1>❤️ My Favorites</h1>
+    <div className="container">
+
+      <h2>Your Favorite Recipes ❤️</h2>
 
       {favorites.length === 0 ? (
-        <p>No favorites added yet.</p>
+        <p>No favorite recipes yet</p>
       ) : (
-        favorites.map((recipe) => (
-          <div key={recipe.idMeal}>
-            <h3>{recipe.strMeal}</h3>
-            <img src={recipe.strMealThumb} width="200" alt="" />
-          </div>
-        ))
+
+        <div className="recipes-container">
+
+          {favorites.map((recipe, index) => (
+
+            <div key={index}>
+
+              <RecipeCard recipe={recipe} />
+
+              <button
+                onClick={() => removeFavorite(recipe.id)}
+                style={{
+                  marginTop: "10px",
+                  padding: "6px 12px",
+                  background: "#ff4d4d",
+                  border: "none",
+                  color: "white",
+                  borderRadius: "6px",
+                  cursor: "pointer"
+                }}
+              >
+                Remove ❌
+              </button>
+
+            </div>
+
+          ))}
+
+        </div>
+
       )}
+
     </div>
   );
 }
