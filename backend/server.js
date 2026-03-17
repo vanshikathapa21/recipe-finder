@@ -1,15 +1,24 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
+require("dotenv").config();
+
+const connectDB = require("./config/db");
+const recipeRoutes = require("./routes/recipeRoutes");
 
 const app = express();
+
+
+connectDB();
 
 app.use(cors());
 app.use(express.json());
 
+
 app.get("/", (req, res) => {
-  res.send("Backend is working 🚀");
+  res.send("Backend + DB working 🚀");
 });
+
 
 app.get("/recipes", async (req, res) => {
   try {
@@ -27,20 +36,23 @@ app.get("/recipes", async (req, res) => {
       return res.json([]);
     }
 
-    const recipes = response.data.meals.map(meal => ({
+    const recipes = response.data.meals.map((meal) => ({
       id: meal.idMeal,
       title: meal.strMeal,
-      image: meal.strMealThumb
+      image: meal.strMealThumb,
     }));
 
     res.json(recipes);
-
   } catch (error) {
     console.log("Error:", error.message);
     res.status(500).json([]);
   }
 });
 
-app.listen(5000, () => {
-    console.log("Server running on port 5000");
+app.use("/api", recipeRoutes);
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
