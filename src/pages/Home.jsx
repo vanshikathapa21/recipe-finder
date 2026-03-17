@@ -4,6 +4,7 @@ import IngredientList from "../components/IngredientList";
 import { getRecipes, getRecipeDetails } from "../services/recipeApi";
 import RecipeCard from "../components/RecipeCard";
 import RecipeModal from "../components/RecipeModal";
+import axios from "axios";
 
 function Home() {
 
@@ -12,16 +13,7 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [favorites, setFavorites] = useState([]);
-
-  useEffect(() => {
-    const savedFavorites = localStorage.getItem("favorites");
-
-    if (savedFavorites) {
-      setFavorites(JSON.parse(savedFavorites));
-    }
-  }, []);
-
+  
   async function handleGetRecipe() {
   try {
     setLoading(true);
@@ -53,20 +45,19 @@ async function handleSelectRecipe(id) {
   }
 }
 
-function addToFavorites(recipe) {
+async function addToFavorites(recipe) {
+  try {
+    await axios.post("http://localhost:5000/api/favorites", {
+      id: recipe.id,
+      title: recipe.title,
+      image: recipe.image,
+    });
 
-  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-
-  const exists = favorites.find(item => item.id === recipe.id);
-
-  if (!exists) {
-    favorites.push(recipe);
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-    alert("Recipe added to favorites");
-  } else {
-    alert("Already in favorites");
+    alert("Recipe saved to database ❤️");
+  } catch (error) {
+    console.log(error);
+    alert("Error saving recipe");
   }
-
 }
 
   return (

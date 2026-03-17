@@ -1,65 +1,49 @@
 import { useEffect, useState } from "react";
-import RecipeCard from "../components/RecipeCard";
+import axios from "axios";
 
 function Favorites() {
-
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("favorites")) || [];
-    setFavorites(saved);
+    fetchFavorites();
   }, []);
 
-  function removeFavorite(id) {
+  const fetchFavorites = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/favorites");
+      setFavorites(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  const updated = favorites.filter((item) => item.id !== id);
-
-  setFavorites(updated);
-
-  localStorage.setItem("favorites", JSON.stringify(updated));
-
-}
+   const deleteFavorite = async (id) => {
+  try {
+    await axios.delete(`http://localhost:5000/api/favorites/${id}`);
+    fetchFavorites(); // refresh list
+  } catch (error) {
+    console.log(error);
+  }
+};
 
   return (
-    <div className="container">
+    <div>
+      <h2>❤️ My Favorites</h2>
 
-      <h2>Your Favorite Recipes ❤️</h2>
+      <div className="recipes-container">
+        {favorites.map((recipe) => (
+          <div key={recipe._id} className="recipe-card">
+            <img src={recipe.image} alt={recipe.title} />
+            <h3>{recipe.title}</h3>
 
-      {favorites.length === 0 ? (
-        <p>No favorite recipes yet</p>
-      ) : (
+            <button onClick={() => deleteFavorite(recipe._id)}>
+      🗑 Remove
+    </button>
 
-        <div className="recipes-container">
-
-          {favorites.map((recipe, index) => (
-
-            <div key={index}>
-
-              <RecipeCard recipe={recipe} />
-
-              <button
-                onClick={() => removeFavorite(recipe.id)}
-                style={{
-                  marginTop: "10px",
-                  padding: "6px 12px",
-                  background: "#ff4d4d",
-                  border: "none",
-                  color: "white",
-                  borderRadius: "6px",
-                  cursor: "pointer"
-                }}
-              >
-                Remove ❌
-              </button>
-
-            </div>
-
-          ))}
-
-        </div>
-
-      )}
-
+          
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

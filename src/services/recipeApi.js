@@ -3,7 +3,7 @@ export async function getRecipes(ingredients) {
   const query = ingredients.join(",");
 
   const response = await fetch(
-    `http://localhost:5000/recipes?ingredients=${query}`
+    `https://recipe-finder-qn7a.onrender.com/recipes?ingredients=${query}`
   );
 
   const data = await response.json();
