@@ -13,7 +13,7 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedRecipe, setSelectedRecipe] = useState(null);
-  
+
   async function handleGetRecipe() {
   try {
     setLoading(true);
@@ -47,16 +47,21 @@ async function handleSelectRecipe(id) {
 
 async function addToFavorites(recipe) {
   try {
-    await axios.post("http://localhost:5000/api/favorites", {
-      id: recipe.id,
-      title: recipe.title,
-      image: recipe.image,
+    await fetch("https://recipe-finder-qn7a.onrender.com/api/favorites", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: recipe.id,
+        title: recipe.title,
+        image: recipe.image,
+      }),
     });
 
-    alert("Recipe saved to database ❤️");
+    alert("Recipe added to favorites ❤️");
   } catch (error) {
     console.log(error);
-    alert("Error saving recipe");
   }
 }
 

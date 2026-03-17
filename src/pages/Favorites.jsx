@@ -22,7 +22,7 @@ function Favorites() {
   const deleteFavorite = async (id) => {
     try {
       await axios.delete(`${BASE_URL}/api/favorites/${id}`);
-      fetchFavorites(); 
+      fetchFavorites();
     } catch (error) {
       console.log(error);
     }
