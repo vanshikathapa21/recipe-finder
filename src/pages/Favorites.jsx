@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const BASE_URL = "https://recipe-finder-qn7a.onrender.com";
+
 function Favorites() {
   const [favorites, setFavorites] = useState([]);
 
@@ -10,21 +12,21 @@ function Favorites() {
 
   const fetchFavorites = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/favorites");
+      const res = await axios.get(`${BASE_URL}/api/favorites`);
       setFavorites(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-   const deleteFavorite = async (id) => {
-  try {
-    await axios.delete(`http://localhost:5000/api/favorites/${id}`);
-    fetchFavorites(); // refresh list
-  } catch (error) {
-    console.log(error);
-  }
-};
+  const deleteFavorite = async (id) => {
+    try {
+      await axios.delete(`${BASE_URL}/api/favorites/${id}`);
+      fetchFavorites(); 
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -37,10 +39,8 @@ function Favorites() {
             <h3>{recipe.title}</h3>
 
             <button onClick={() => deleteFavorite(recipe._id)}>
-      🗑 Remove
-    </button>
-
-          
+              🗑 Remove
+            </button>
           </div>
         ))}
       </div>
