@@ -16,21 +16,13 @@ function IngredientList({ ingredients, handleGetRecipe, setIngredients }) {
         ))}
       </ul>
 
-      <button onClick={handleGetRecipe}
-         disabled={ingredients.length === 0}
-         style={{
-              backgroundColor: ingredients.length === 0 ? "gray" : "green",
-              color: "white",
-              cursor: ingredients.length === 0 ? "not-allowed" : "pointer"
-  }}
->
-  Get Recipes
-</button>
+      <div className="action-buttons">
+        
+        <button onClick={handleGetRecipe}> Get Recipes </button>
 
-      <button onClick={() => setIngredients([])}>
-        Clear All
-      </button>
+        <button onClick={() => setIngredients([])}> Clear All</button>
 
+      </div>
     </div>
   );
 }

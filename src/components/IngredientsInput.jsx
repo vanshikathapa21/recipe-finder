@@ -18,23 +18,16 @@ function IngredientsInput({ setIngredients }) {
 
   return (
     <div className="input-box">
-      
-      <input
-        type="text"
-        placeholder="enter ingredient"
-        value={newIngredient}
-        onChange={handleChange}
-        onKeyDown={(e)=>{
-          if(e.key === "Enter"){
-             addIngredient();
-          }
-        }}
-      />
+  <input
+    type="text"
+    placeholder="enter ingredient"
+    value={newIngredient}
+    onChange={(e) => setNewIngredient(e.target.value)}
+  />
 
-      <button onClick={addIngredient}>
-        Add Ingredient
-      </button>
-
+  <button>
+    Add Ingredient
+  </button>
     </div>
   );
 }
