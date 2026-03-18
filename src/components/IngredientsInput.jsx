@@ -8,7 +8,7 @@ function IngredientsInput({ setIngredients }) {
     setNewIngredient(e.target.value);
   }
 
-  function addIngredient() {
+  function handleAddIngredient() {
     if (newIngredient.trim() === "") return;
 
     setIngredients(prev => [...prev, newIngredient.toLowerCase().trim()]);
@@ -23,9 +23,15 @@ function IngredientsInput({ setIngredients }) {
     placeholder="enter ingredient"
     value={newIngredient}
     onChange={(e) => setNewIngredient(e.target.value)}
+    onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddIngredient();
+    }
+  }}
   />
 
-  <button>
+  <button onClick={handleAddIngredient}>
     Add Ingredient
   </button>
     </div>

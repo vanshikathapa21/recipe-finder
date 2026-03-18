@@ -43,11 +43,15 @@ body{
 }
 
 .nav-links a{
-  color:white;
+  color:black;
   text-decoration:none;
   padding:6px 12px;
   border-radius:8px;
   transition:0.3s;
+}
+
+.dark .nav-links a{
+  color:white;
 }
 
 .nav-links a:hover{
