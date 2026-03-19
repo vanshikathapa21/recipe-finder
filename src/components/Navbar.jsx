@@ -1,21 +1,10 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
 
-function Navbar() {
-
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-
-    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-
-    setCount(favorites.length);
-
-  }, []);
+function Navbar({ favCount, toggleMode, darkMode }) {
 
   return (
     <nav className="navbar">
-      <div className="logo">🍲 Khana Khazana</div>
+      <h2 className="logo">🍲 Khana Khazana</h2>
 
       <ul className="nav-links">
         <li>
@@ -23,12 +12,13 @@ function Navbar() {
         </li>
 
         <li>
-          <Link to="/favorites">
-            Favorites ({count})
-          </Link>
+          <Link to="/favorites">Favorites ({favCount})</Link>
         </li>
-
       </ul>
+
+      <button className="toggle-btn" onClick={toggleMode}>
+        {darkMode ? "☀️ Light" : "🌙 Dark"}
+      </button>
     </nav>
   );
 }

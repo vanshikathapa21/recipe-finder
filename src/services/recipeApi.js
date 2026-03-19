@@ -1,23 +1,34 @@
 export async function getRecipes(ingredients) {
+  try {
 
-  const query = ingredients.join(",");
+     if (!ingredients || ingredients.length === 0) return [];
 
-  const response = await fetch(
-    `https://recipe-finder-qn7a.onrender.com/recipes?ingredients=${query}`
-  );
+    const mainIngredient = ingredients[0]; 
+    const res = await fetch(
+      `https://www.themealdb.com/api/json/v1/1/filter.php?i=${mainIngredient}`
+    );
 
-  const data = await response.json();
+    const data = await res.json();
 
-  return data; 
+    return data.meals || [];
+
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 }
 
 export async function getRecipeDetails(id) {
+  try {
+    const res = await fetch(
+      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
+    );
 
-  const response = await fetch(
-    `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
-  );
+    const data = await res.json();
 
-  const data = await response.json();
-
-  return data.meals[0];
+    return data.meals ? data.meals[0] : null;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
 }

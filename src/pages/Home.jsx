@@ -1,80 +1,90 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import IngredientsInput from "../components/IngredientsInput";
 import IngredientList from "../components/IngredientList";
-import { getRecipes, getRecipeDetails } from "../services/recipeApi";
 import RecipeCard from "../components/RecipeCard";
 import RecipeModal from "../components/RecipeModal";
-import axios from "axios";
+import { getRecipes } from "../services/recipeApi";
+import { getRecipeDetails } from "../services/recipeApi";
 
-function Home() {
-
+function Home({ setFavCount }) {
   const [ingredients, setIngredients] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-  async function handleGetRecipe() {
+async function handleGetRecipe() {
   try {
     setLoading(true);
     setError("");
 
-    if (ingredients.length === 0) return;
+    if (ingredients.length === 0) {
+      setError("Please enter at least 1 ingredient");
+      setLoading(false);
+      return;
+    }
 
     const result = await getRecipes(ingredients);
+    console.log("Fetched recipes:", result);
 
-    setRecipes(result);
-
+    if (!result || result.length === 0) {
+      setError("No recipes found 😢");
+      setRecipes([]);
+    } else {
+      setRecipes(result);
+    }
   } catch (err) {
+    console.error(err);
     setError("Something went wrong");
   }
 
   setLoading(false);
 }
 
-async function handleSelectRecipe(id) {
+async function handleSelectRecipe(recipe) {
   try {
-    const data = await getRecipeDetails(id);
+    const res = await fetch(
+      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${recipe.idMeal}`
+    );
 
-    console.log("Recipe Details:", data);
+    const data = await res.json();
 
-    setSelectedRecipe(data);
+    console.log("API RESPONSE:", data);
 
-  } catch (error) {
-    console.log("Error loading recipe", error);
+    if (data.meals && data.meals.length > 0) {
+      setSelectedRecipe(data.meals[0]); // ✅ FULL DATA
+    } else {
+      alert("No details found 😢");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Error fetching recipe");
   }
 }
 
-async function addToFavorites(recipe) {
-  try {
-    await fetch("https://recipe-finder-qn7a.onrender.com/api/favorites", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: recipe.id,
-        title: recipe.title,
-        image: recipe.image,
-      }),
-    });
+function addToFavorites(recipe) {
+  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  const exists = favorites.find((item) => item.idMeal === recipe.idMeal);
 
-    alert("Recipe added to favorites ❤️");
-  } catch (error) {
-    console.log(error);
+  if (!exists) {
+    favorites.push(recipe);
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+    alert("Added to favorites ❤️");
+  } else {
+    alert("Already in favorites 😄");
   }
+
+  setFavCount(favorites.length);
 }
 
   return (
     <div>
-
       <div className="hero">
         <h1>🍲 Khana Khazana</h1>
         <p>Enter ingredients you have and discover amazing recipes instantly.</p>
       </div>
 
       <div className="container">
-
         <IngredientsInput setIngredients={setIngredients} />
 
         <IngredientList
@@ -84,39 +94,32 @@ async function addToFavorites(recipe) {
         />
 
         {loading && <p>⏳ Loading recipes...</p>}
-
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        {ingredients.length > 0 && (
-          <p>Showing recipes using: {ingredients.join(", ")}</p>
-      )}
+        {ingredients.length > 0 && <p>Using: {ingredients.join(", ")}</p>}
 
         <div className="recipes-container">
-
           {recipes.map((recipe) => (
             <RecipeCard
-              key={recipe.id}
+              key={recipe.idMeal}
               recipe={recipe}
-              onSelect={handleSelectRecipe}
+              onSelect={() => handleSelectRecipe(recipe)}
               addToFavorites={addToFavorites}
             />
           ))}
-
         </div>
 
-        {!loading && recipes.length === 0 && (
+        {!loading && recipes.length === 0 && !error && (
           <p>No recipes found for these ingredients.</p>
         )}
-
       </div>
 
-     {selectedRecipe && (
-       <RecipeModal
+      {selectedRecipe && (
+        <RecipeModal
           recipe={selectedRecipe}
           onClose={() => setSelectedRecipe(null)}
-  />
-)}
-
+        />
+      )}
     </div>
   );
 }

@@ -7,22 +7,25 @@ function IngredientList({ ingredients, handleGetRecipe, setIngredients }) {
   return (
     <div>
 
-      <ul>
+      {}
+      <ul className="ingredient-list">
         {ingredients.map((item, index) => (
-          <li key={index}>
-            {item}
-            <button onClick={() => removeIngredient(index)}>❌</button>
+          <li className="ingredient-item" key={index}>
+            <span>{item}</span>
+
+            <button onClick={() => removeIngredient(index)}>
+              ❌
+            </button>
           </li>
         ))}
       </ul>
 
-      <div className="action-buttons">
-        
-        <button onClick={handleGetRecipe}> Get Recipes </button>
-
-        <button onClick={() => setIngredients([])}> Clear All</button>
-
+      {}
+      <div className="actions">
+        <button onClick={handleGetRecipe}>Get Recipes</button>
+        <button onClick={() => setIngredients([])}>Clear All</button>
       </div>
+
     </div>
   );
 }

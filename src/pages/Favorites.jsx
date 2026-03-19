@@ -1,49 +1,48 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 
-const BASE_URL = "https://recipe-finder-qn7a.onrender.com";
-
-function Favorites() {
+function Favorites({ setFavCount }) {
   const [favorites, setFavorites] = useState([]);
 
   useEffect(() => {
-    fetchFavorites();
+    const saved = JSON.parse(localStorage.getItem("favorites")) || [];
+    setFavorites(saved);
+
+    if (setFavCount) {
+      setFavCount(saved.length);
+    }
   }, []);
 
-  const fetchFavorites = async () => {
-    try {
-      const res = await axios.get(`${BASE_URL}/api/favorites`);
-      setFavorites(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const deleteFavorite = async (id) => {
-    try {
-      await axios.delete(`${BASE_URL}/api/favorites/${id}`);
-      fetchFavorites();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // ❌ remove from favorites
+  function removeFromFavorites(id) {
+    let updated = favorites.filter((item) => item.idMeal !== id);
+    setFavorites(updated);
+    localStorage.setItem("favorites", JSON.stringify(updated));
+    setFavCount(updated.length);
+  }
 
   return (
-    <div>
-      <h2>❤️ My Favorites</h2>
+    <div className="container">
+      <h2>Your Favorites ❤️</h2>
 
-      <div className="recipes-container">
-        {favorites.map((recipe) => (
-          <div key={recipe._id} className="recipe-card">
-            <img src={recipe.image} alt={recipe.title} />
-            <h3>{recipe.title}</h3>
+      {favorites.length === 0 ? (
+        <p>No favorites added yet.</p>
+      ) : (
+        <div className="recipes-container">
+          {favorites.map((recipe) => (
+            <div className="recipe-card" key={recipe.idMeal}>
+              
+              <img src={recipe.strMealThumb} alt={recipe.strMeal} />
 
-            <button onClick={() => deleteFavorite(recipe._id)}>
-              🗑 Remove
-            </button>
-          </div>
-        ))}
-      </div>
+              <h3>{recipe.strMeal}</h3>
+
+              <button onClick={() => removeFromFavorites(recipe.idMeal)}>
+                ❌ Remove
+              </button>
+
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
