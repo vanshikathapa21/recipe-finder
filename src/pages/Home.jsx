@@ -4,7 +4,6 @@ import IngredientList from "../components/IngredientList";
 import RecipeCard from "../components/RecipeCard";
 import RecipeModal from "../components/RecipeModal";
 import { getRecipes } from "../services/recipeApi";
-import { getRecipeDetails } from "../services/recipeApi";
 
 function Home({ setFavCount }) {
   const [ingredients, setIngredients] = useState([]);
@@ -14,15 +13,15 @@ function Home({ setFavCount }) {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
 async function handleGetRecipe() {
-  try {
-    setLoading(true);
-    setError("");
+    try {
+      setLoading(true);
+      setError("");
 
-    if (ingredients.length === 0) {
-      setError("Please enter at least 1 ingredient");
-      setLoading(false);
-      return;
-    }
+      if (ingredients.length === 0) {
+        setError("Please enter at least 1 ingredient");
+        setLoading(false);
+        return;
+      }
 
     const result = await getRecipes(ingredients);
     console.log("Fetched recipes:", result);
@@ -41,41 +40,39 @@ async function handleGetRecipe() {
   setLoading(false);
 }
 
-async function handleSelectRecipe(recipe) {
-  try {
-    const res = await fetch(
-      `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${recipe.idMeal}`
-    );
+async function handleSelectRecipe(id) {
+    try {
+      const res = await fetch(
+        `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
+      );
 
-    const data = await res.json();
+      const data = await res.json();
 
-    console.log("API RESPONSE:", data);
-
-    if (data.meals && data.meals.length > 0) {
-      setSelectedRecipe(data.meals[0]); // ✅ FULL DATA
-    } else {
-      alert("No details found 😢");
+      if (data.meals && data.meals.length > 0) {
+        setSelectedRecipe(data.meals[0]);
+      } else {
+        alert("No details found 😢");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error fetching recipe");
     }
-  } catch (err) {
-    console.error(err);
-    alert("Error fetching recipe");
-  }
-}
-
-function addToFavorites(recipe) {
-  let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-  const exists = favorites.find((item) => item.idMeal === recipe.idMeal);
-
-  if (!exists) {
-    favorites.push(recipe);
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-    alert("Added to favorites ❤️");
-  } else {
-    alert("Already in favorites 😄");
   }
 
-  setFavCount(favorites.length);
-}
+  function addToFavorites(recipe) {
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    const exists = favorites.find((item) => item.idMeal === recipe.idMeal);
+
+    if (!exists) {
+      favorites.push(recipe);
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      alert("Added to favorites ❤️");
+    } else {
+      alert("Already in favorites 😄");
+    }
+
+    setFavCount(favorites.length);
+  }
 
   return (
     <div>
@@ -101,11 +98,11 @@ function addToFavorites(recipe) {
         <div className="recipes-container">
           {recipes.map((recipe) => (
             <RecipeCard
-              key={recipe.idMeal}
-              recipe={recipe}
-              onSelect={() => handleSelectRecipe(recipe)}
-              addToFavorites={addToFavorites}
-            />
+  key={recipe.idMeal}
+  recipe={recipe}
+  onSelect={() => handleSelectRecipe(recipe.idMeal)}
+  addToFavorites={addToFavorites}
+/>
           ))}
         </div>
 

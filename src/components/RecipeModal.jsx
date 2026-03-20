@@ -3,7 +3,6 @@ function RecipeModal({ recipe, onClose }) {
 
   return (
     <div className="modal" onClick={onClose}>
-      
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         
         <h2>{recipe.strMeal}</h2>
@@ -12,15 +11,18 @@ function RecipeModal({ recipe, onClose }) {
 
         {}
         <div className="modal-body">
-          <p>
-            {recipe?.strInstructions
-              ? recipe.strInstructions
-              : "No steps available"}
-          </p>
+          {recipe?.strInstructions ? (
+            recipe.strInstructions.split("\r\n").map((step, index) => (
+              <p key={index}>
+                <strong>Step {index + 1}:</strong> {step}
+              </p>
+            ))
+          ) : (
+            <p>No steps available</p>
+          )}
         </div>
 
-        <button onClick={onClose}>Close</button>
-
+        <button className="close-btn" onClick={onClose}>Close</button>
       </div>
     </div>
   );
