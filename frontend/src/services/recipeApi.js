@@ -1,16 +1,17 @@
 export async function getRecipes(ingredients) {
   try {
+    if (!ingredients || ingredients.length === 0) return [];
 
-     if (!ingredients || ingredients.length === 0) return [];
-
-    const mainIngredient = ingredients[0]; 
+    // Pass all ingredients to backend, separated by commas
+    const ingredientString = ingredients.join(",");
+    
     const res = await fetch(
-      `https://www.themealdb.com/api/json/v1/1/filter.php?i=${mainIngredient}`
+      `http://localhost:5000/recipes?ingredients=${encodeURIComponent(ingredientString)}`
     );
 
     const data = await res.json();
 
-    return data.meals || [];
+    return Array.isArray(data) ? data : [];
 
   } catch (err) {
     console.error(err);
