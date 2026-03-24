@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const connectDB = require("./config/db");
 const recipeRoutes = require("./routes/recipeRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -88,6 +89,7 @@ app.get("/recipes", async (req, res) => {
 });
 
 app.use("/api", recipeRoutes);
+app.use("/api/auth", authRoutes);
 
 const PORT = process.env.PORT || 5000;
 
