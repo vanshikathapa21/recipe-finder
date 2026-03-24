@@ -2,11 +2,11 @@ export async function getRecipes(ingredients) {
   try {
     if (!ingredients || ingredients.length === 0) return [];
 
-    // Pass all ingredients to backend, separated by commas
+    
     const ingredientString = ingredients.join(",");
     
     const res = await fetch(
-      `http://localhost:5000/recipes?ingredients=${encodeURIComponent(ingredientString)}`
+      `https://recipe-finder-pjni.onrender.com/recipes?ingredients=${encodeURIComponent(ingredientString)}`
     );
 
     const data = await res.json();
