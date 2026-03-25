@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import IngredientsInput from "../components/IngredientsInput";
 import IngredientList from "../components/IngredientList";
@@ -6,6 +6,7 @@ import RecipeCard from "../components/RecipeCard";
 import RecipeModal from "../components/RecipeModal";
 import FavoriteModal from "../components/FavoriteModal";
 import { getRecipes } from "../services/recipeApi";
+import axios from "axios";
 
 function Home({
   ingredients,
@@ -23,7 +24,30 @@ function Home({
   favoriteModalRecipe,
   setFavoriteModalRecipe,
   setFavCount,
+
 }) {
+
+   const token = localStorage.getItem("token");
+   const [favorites, setFavorites] = useState([]);
+
+
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      if (!token) return;
+      try {
+        const res = await axios.get("http://localhost:5000/api/favorites", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setFavorites(res.data);
+        localStorage.setItem("favorites", JSON.stringify(res.data));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchFavorites();
+  }, [token]);
+
+
   const handleGetRecipe = useCallback(async () => {
     try {
       setLoading(true);
@@ -89,19 +113,49 @@ function Home({
     setFavoriteModalRecipe(recipe);
   }, [setFavoriteModalRecipe]);
 
-  const confirmAddToFavorites = useCallback((recipe) => {
-    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    const recipeId = recipe.id || recipe.idMeal;
-    const exists = favorites.find((item) => (item.id || item.idMeal) === recipeId);
+  const confirmAddToFavorites = useCallback(async (recipe) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("You must be logged in to add favorites!");
+    return;
+  }
 
-    if (!exists) {
-      favorites.push(recipe);
-      localStorage.setItem("favorites", JSON.stringify(favorites));
-      setFavCount(favorites.length);
+  try {
+    console.log("Adding to favorites:", { id: recipe.id || recipe.idMeal, title: recipe.title || recipe.strMeal, image: recipe.image || recipe.strMealThumb });
+    const res = await axios.post(
+      "http://localhost:5000/api/favorites",
+      {
+        id: recipe.id || recipe.idMeal,
+        title: recipe.title || recipe.strMeal,
+        image: recipe.image || recipe.strMealThumb,
+      },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Update local favorites
+    const favRecipe = { ...recipe, id: recipe.id || recipe.idMeal };
+    const updatedFavorites = [...favorites, favRecipe];
+    setFavorites(updatedFavorites);
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+
+    alert("❤️ Saved to favorites!");
+  } catch (err) {
+    console.error("Error adding to favorites:", err);
+    const errorMessage = err.response?.data?.message || err.response?.data?.error || "Error saving recipe";
+
+    if (err.response?.status === 401) {
+      alert("Session expired or invalid authentication token. Please log in again.");
+      localStorage.removeItem("token");
+      localStorage.removeItem("favorites");
+      window.location.href = "/"; // redirect to login
+      return;
     }
 
-    setFavoriteModalRecipe(null);
-  }, [setFavCount, setFavoriteModalRecipe]);
+    alert(`Error: ${errorMessage}`);
+  }
+
+  setFavoriteModalRecipe(null);
+}, [favorites, setFavoriteModalRecipe]);
 
   const closeFavoriteModal = useCallback(() => {
     setFavoriteModalRecipe(null);

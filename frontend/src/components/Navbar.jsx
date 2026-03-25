@@ -1,7 +1,15 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 function Navbar({ favCount, toggleMode, darkMode }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+  localStorage.removeItem("token"); 
+  navigate("/"); 
+};
+
   const navVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: {
@@ -44,7 +52,7 @@ function Navbar({ favCount, toggleMode, darkMode }) {
 
       <motion.ul className="nav-links" variants={itemVariants}>
         <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Link to="/">Home</Link>
+          <Link to="/home">Home</Link>
         </motion.li>
 
         <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -60,7 +68,13 @@ function Navbar({ favCount, toggleMode, darkMode }) {
             </motion.span>
           </Link>
         </motion.li>
-      </motion.ul>
+
+ <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <button onClick={handleLogout}>
+            Logout
+          </button>
+        </motion.li>
+     </motion.ul>
 
       <motion.button
         className="toggle-btn"

@@ -1,43 +1,59 @@
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 
 function Favorites({ setFavCount }) {
   const [favorites, setFavorites] = useState([]);
 
-  // Load favorites from localStorage on mount and refresh when page comes into focus
   useEffect(() => {
-    const loadFavorites = () => {
-      const saved = JSON.parse(localStorage.getItem("favorites")) || [];
-      setFavorites(saved);
+  const fetchFavorites = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        "http://localhost:5000/api/favorites",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setFavorites(res.data);
+
       if (setFavCount) {
-        setFavCount(saved.length);
+        setFavCount(res.data.length);
       }
-    };
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-    loadFavorites();
-    
-    // Listen for visibility changes to refresh when user returns to the page
-    window.addEventListener("focus", loadFavorites);
-    window.addEventListener("visibilitychange", () => {
-      if (!document.hidden) {
-        loadFavorites();
+  fetchFavorites();
+}, [setFavCount]);
+
+const removeFromFavorites = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.delete(
+        `http://localhost:5000/api/favorites/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+     setFavorites((prev) => prev.filter((item) => item._id !== id));
+
+      if (setFavCount) {
+        setFavCount((prev) => prev - 1);
       }
-    });
-
-    return () => {
-      window.removeEventListener("focus", loadFavorites);
-      window.removeEventListener("visibilitychange", () => {});
-    };
-  }, [setFavCount]);
-
-  const removeFromFavorites = useCallback((id) => {
-    setFavorites((prev) => {
-      const updated = prev.filter((item) => (item.id || item.idMeal) !== id);
-      localStorage.setItem("favorites", JSON.stringify(updated));
-      setFavCount(updated.length);
-      return updated;
-    });
-  }, [setFavCount]);
+    } catch (err) {
+      console.log(err);
+    }
+  }; 
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -115,7 +131,7 @@ function Favorites({ setFavCount }) {
             {favorites.map((recipe) => (
               <motion.div
                 className="recipe-card"
-                key={recipe.id || recipe.idMeal}
+                key={recipe._id}
                 variants={cardVariants}
                 initial="hidden"
                 animate="visible"
@@ -133,7 +149,7 @@ function Favorites({ setFavCount }) {
                   <motion.button
                     className="favorite-btn"
                     style={{ width: "100%" }}
-                    onClick={() => removeFromFavorites(recipe.id || recipe.idMeal)}
+                    onClick={() => removeFromFavorites(recipe._id)}
                     variants={buttonVariants}
                     whileHover="hover"
                     whileTap="tap"

@@ -1,16 +1,23 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Favorites from "./pages/Favorites";
-import { useState, useEffect, useCallback } from "react";
-import Navbar from "./components/Navbar";
+
 import "./styles/main.css";
 
 function App() {
   // Theme state
   const [darkMode, setDarkMode] = useState(false);
+
+  // Favorites count
   const [favCount, setFavCount] = useState(0);
 
-  // Shared state for Home page
+  // Shared state for Home/Favorites page
   const [ingredients, setIngredients] = useState([]);
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -38,7 +45,7 @@ function App() {
     setDarkMode(!darkMode);
   }, [darkMode]);
 
-  // Shared state setters
+  // Shared state object
   const sharedState = {
     ingredients,
     setIngredients,
@@ -60,22 +67,34 @@ function App() {
   return (
     <BrowserRouter>
       <div className="app">
-        <Navbar 
-          favCount={favCount} 
-          toggleMode={toggleMode} 
-          darkMode={darkMode}
-        />
+        <Navbar favCount={favCount} toggleMode={toggleMode} darkMode={darkMode} />
 
         <Routes>
-          <Route 
-            path="/" 
-            element={<Home {...sharedState} />} 
+          {/* Public route */}
+          <Route path="/" element={<Login />} />
+
+          {/* Protected Home route */}
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <Home {...sharedState} />
+              </ProtectedRoute>
+            }
           />
 
-          <Route 
-            path="/favorites" 
-            element={<Favorites {...sharedState} />} 
+          {/* Protected Favorites route */}
+          <Route
+            path="/favorites"
+            element={
+              <ProtectedRoute>
+                <Favorites {...sharedState} />
+              </ProtectedRoute>
+            }
           />
+
+          {/* Optional: fallback route */}
+          {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
         </Routes>
       </div>
     </BrowserRouter>
