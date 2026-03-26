@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 function Signup() {
   const [email, setEmail] = useState("");
@@ -11,7 +11,9 @@ function Signup() {
 
   const handleSignup = async () => {
     try {
-      const res = await axios.post(`${API_BASE}/api/auth/signup`, {
+      const signupUrl = `${API_BASE}/auth/signup`;
+      console.log("[Signup.jsx] signupUrl:", signupUrl);
+      const res = await axios.post(signupUrl, {
         email,
         password,
       });

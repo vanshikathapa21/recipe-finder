@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -11,7 +11,9 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post(`${API_BASE}/api/auth/login`, {
+      const loginUrl = `${API_BASE}/auth/login`;
+      console.log("[Login.jsx] loginUrl:", loginUrl);
+      const res = await axios.post(loginUrl, {
         email,
         password,
       });
@@ -28,10 +30,9 @@ function Login() {
 
       navigate("/home", { replace: true });
     } catch (err) {
-      console.error(err);
-        console.log(err);
-        alert(err.response?.data?.message || "Login failed");
-
+      console.error("[Login.jsx] login error", err);
+      const message = err.response?.data?.message || err.message || "Login failed";
+      alert(message);
     }
   };
 

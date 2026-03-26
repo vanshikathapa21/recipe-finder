@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 function Favorites({ setFavCount }) {
   const [favorites, setFavorites] = useState([]);
@@ -11,9 +11,13 @@ function Favorites({ setFavCount }) {
   const fetchFavorites = async () => {
     try {
       const token = localStorage.getItem("token");
+      console.log("[Favorites.jsx] fetching favorites, token:", token ? "exists" : "missing");
+
+      const favoritesUrl = `${API_BASE}/favorites`;
+      console.log("[Favorites.jsx] favoritesUrl:", favoritesUrl);
 
       const res = await axios.get(
-        `${API_BASE}/api/favorites`,
+        favoritesUrl,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -21,13 +25,17 @@ function Favorites({ setFavCount }) {
         }
       );
 
+      console.log("[Favorites.jsx] API response:", res.data);
+      console.log("[Favorites.jsx] response is array:", Array.isArray(res.data));
+
       setFavorites(res.data);
 
       if (setFavCount) {
         setFavCount(res.data.length);
       }
     } catch (err) {
-      console.log(err);
+      console.error("[Favorites.jsx] fetch error:", err);
+      console.error("[Favorites.jsx] error response:", err.response?.data);
     }
   };
 
@@ -37,9 +45,11 @@ function Favorites({ setFavCount }) {
 const removeFromFavorites = useCallback(async (id) => {
     try {
       const token = localStorage.getItem("token");
+      const deleteUrl = `${API_BASE}/favorites/${id}`;
+      console.log("[Favorites.jsx] deleteUrl:", deleteUrl);
 
       await axios.delete(
-        `${API_BASE}/api/favorites/${id}`,
+        deleteUrl,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -47,13 +57,14 @@ const removeFromFavorites = useCallback(async (id) => {
         }
       );
 
+      console.log("[Favorites.jsx] deleted recipe:", id);
      setFavorites((prev) => prev.filter((item) => item._id !== id));
 
       if (setFavCount) {
         setFavCount((prev) => prev - 1);
       }
     } catch (err) {
-      console.log(err);
+      console.error("[Favorites.jsx] delete error:", err);
     }
   }, [setFavCount]);
 

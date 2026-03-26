@@ -24,9 +24,13 @@ const saveRecipe = async (req, res) => {
 
 const getFavorites = async (req, res) => {
     try {
+        console.log("[recipeController.getFavorites] userId:", req.user.id);
         const favorites = await Recipe.find({ user: req.user.id });
+        console.log("[recipeController.getFavorites] found favorites count:", favorites.length);
+        console.log("[recipeController.getFavorites] favorites data:", favorites);
         res.json(favorites);
     } catch (error) {
+        console.error("[recipeController.getFavorites] error:", error);
         res.status(500).json({ error: "Something went wrong" });
     }
 };
