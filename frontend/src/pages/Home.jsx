@@ -42,6 +42,12 @@ function Home({
         localStorage.setItem("favorites", JSON.stringify(res.data));
       } catch (err) {
         console.log(err);
+        if (err.response?.status === 401) {
+          alert("Session expired / invalid token. Please log in again.");
+          localStorage.removeItem("token");
+          localStorage.removeItem("favorites");
+          window.location.href = "/";
+        }
       }
     };
     fetchFavorites();
@@ -115,14 +121,15 @@ function Home({
 
   const confirmAddToFavorites = useCallback(async (recipe) => {
   const token = localStorage.getItem("token");
-  if (!token) {
+  if (!token || token === "undefined" || token === "null") {
     alert("You must be logged in to add favorites!");
+    localStorage.removeItem("token");
     return;
   }
 
   try {
     console.log("Adding to favorites:", { id: recipe.id || recipe.idMeal, title: recipe.title || recipe.strMeal, image: recipe.image || recipe.strMealThumb });
-    const res = await axios.post(
+    await axios.post(
       "http://localhost:5000/api/favorites",
       {
         id: recipe.id || recipe.idMeal,

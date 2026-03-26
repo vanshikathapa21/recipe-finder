@@ -32,7 +32,7 @@ function Favorites({ setFavCount }) {
   fetchFavorites();
 }, [setFavCount]);
 
-const removeFromFavorites = async (id) => {
+const removeFromFavorites = useCallback(async (id) => {
     try {
       const token = localStorage.getItem("token");
 
@@ -53,7 +53,7 @@ const removeFromFavorites = async (id) => {
     } catch (err) {
       console.log(err);
     }
-  }; 
+  }, [setFavCount]); 
 
   const containerVariants = {
     hidden: { opacity: 0 },

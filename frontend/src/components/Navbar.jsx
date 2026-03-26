@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
@@ -52,11 +52,13 @@ function Navbar({ favCount, toggleMode, darkMode }) {
 
       <motion.ul className="nav-links" variants={itemVariants}>
         <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Link to="/home">Home</Link>
+          <NavLink to="/home" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+            Home
+          </NavLink>
         </motion.li>
 
         <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Link to="/favorites">
+          <NavLink to="/favorites" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
             Favorites{" "}
             <motion.span
               key={favCount}
@@ -66,11 +68,11 @@ function Navbar({ favCount, toggleMode, darkMode }) {
             >
               ({favCount})
             </motion.span>
-          </Link>
+          </NavLink>
         </motion.li>
 
  <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <button onClick={handleLogout}>
+          <button className="logout-btn" onClick={handleLogout}>
             Logout
           </button>
         </motion.li>

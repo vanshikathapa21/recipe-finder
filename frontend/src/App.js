@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import Favorites from "./pages/Favorites";
 
@@ -14,7 +15,7 @@ function App() {
   // Theme state
   const [darkMode, setDarkMode] = useState(false);
 
-  // Favorites count
+  // Favorites count  
   const [favCount, setFavCount] = useState(0);
 
   // Shared state for Home/Favorites page
@@ -70,8 +71,9 @@ function App() {
         <Navbar favCount={favCount} toggleMode={toggleMode} darkMode={darkMode} />
 
         <Routes>
-          {/* Public route */}
+          {/* Public routes */}
           <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
           {/* Protected Home route */}
           <Route
@@ -92,9 +94,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* Optional: fallback route */}
-          {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+          
         </Routes>
       </div>
     </BrowserRouter>
