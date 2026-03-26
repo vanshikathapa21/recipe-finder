@@ -5,13 +5,15 @@ import axios from "axios";
 function Favorites({ setFavCount }) {
   const [favorites, setFavorites] = useState([]);
 
+  const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
   useEffect(() => {
   const fetchFavorites = async () => {
     try {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        "http://localhost:5000/api/favorites",
+        `${API_BASE}/api/favorites`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -37,7 +39,7 @@ const removeFromFavorites = useCallback(async (id) => {
       const token = localStorage.getItem("token");
 
       await axios.delete(
-        `http://localhost:5000/api/favorites/${id}`,
+        `${API_BASE}/api/favorites/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

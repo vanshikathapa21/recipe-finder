@@ -31,11 +31,13 @@ function Home({
    const [favorites, setFavorites] = useState([]);
 
 
+  const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
   useEffect(() => {
     const fetchFavorites = async () => {
       if (!token) return;
       try {
-        const res = await axios.get("http://localhost:5000/api/favorites", {
+        const res = await axios.get(`${API_BASE}/api/favorites`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFavorites(res.data);
@@ -130,7 +132,7 @@ function Home({
   try {
     console.log("Adding to favorites:", { id: recipe.id || recipe.idMeal, title: recipe.title || recipe.strMeal, image: recipe.image || recipe.strMealThumb });
     await axios.post(
-      "http://localhost:5000/api/favorites",
+      `${API_BASE}/api/favorites`,
       {
         id: recipe.id || recipe.idMeal,
         title: recipe.title || recipe.strMeal,

@@ -2,6 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -9,7 +11,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post(`${API_BASE}/api/auth/login`, {
         email,
         password,
       });
@@ -27,8 +29,9 @@ function Login() {
       navigate("/home", { replace: true });
     } catch (err) {
       console.error(err);
-      const message = err.response?.data?.message || "Error during login. Please try again.";
-      alert(message);
+        console.log(err);
+        alert(err.response?.data?.message || "Login failed");
+
     }
   };
 
