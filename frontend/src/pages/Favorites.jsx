@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
-const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 function Favorites({ setFavCount }) {
   const [favorites, setFavorites] = useState([]);
