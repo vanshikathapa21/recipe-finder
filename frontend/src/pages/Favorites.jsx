@@ -2,10 +2,10 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
+const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+
 function Favorites({ setFavCount }) {
   const [favorites, setFavorites] = useState([]);
-
-  const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
   useEffect(() => {
   const fetchFavorites = async () => {
@@ -55,7 +55,7 @@ const removeFromFavorites = useCallback(async (id) => {
     } catch (err) {
       console.log(err);
     }
-  }, [setFavCount]); 
+  }, [setFavCount]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
