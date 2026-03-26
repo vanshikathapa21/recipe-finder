@@ -7,8 +7,7 @@ import RecipeModal from "../components/RecipeModal";
 import FavoriteModal from "../components/FavoriteModal";
 import { getRecipes } from "../services/recipeApi";
 import axios from "axios";
-
-const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:5000";
+import { API_BASE } from "../config/api";
 
 function Home({
   ingredients,
@@ -36,7 +35,7 @@ function Home({
     const fetchFavorites = async () => {
       if (!token) return;
       try {
-        const res = await axios.get(`${API_BASE}/api/favorites`, {
+        const res = await axios.get(`${API_BASE}/favorites`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFavorites(res.data);
