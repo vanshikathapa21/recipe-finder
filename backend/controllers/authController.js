@@ -38,11 +38,11 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign(
       { id: user._id },
-      "secretkey",
+      process.env.JWT_SECRET || "secretkey",
       { expiresIn: "1d" }
     );
 
-    res.json({ token });
+    res.json({ token, userId: user._id, email: user.email });
   } catch (err) {
     res.status(500).json({ message: "Error" });
   }
