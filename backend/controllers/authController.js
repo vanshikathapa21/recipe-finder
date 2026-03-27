@@ -27,7 +27,7 @@ exports.signup = async (req, res) => {
     res.status(201).json({ message: "Signup successful", userId: newUser._id });
   } catch (err) {
     console.error("[authController.signup] error:", err);
-    res.status(500).json({ message: "failed to signup" });
+   return res.status(500).json({ message: "Something went wrong. Try again later." });
   }
 };
 
@@ -40,16 +40,15 @@ exports.login = async (req, res) => {
     console.log("[authController.login] user lookup:", user ? user._id : "not found");
 
     if (!user) {
-      return res.status(401).json({ message: "failed to login" });
-    }
+  return res.status(401).json({ message: "Invalid email or password" });
+}
 
     const isMatch = await bcrypt.compare(password, user.password);
     console.log("[authController.login] password match:", isMatch);
 
-    if (!isMatch) {
-      return res.status(401).json({ message: "failed to login" });
-    }
-
+   if (!isMatch) {
+  return res.status(401).json({ message: "Invalid email or password" });
+}
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET || "secretkey",

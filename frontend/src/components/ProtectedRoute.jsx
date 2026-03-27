@@ -8,7 +8,7 @@ function ProtectedRoute({ children }) {
 
   if (!token) {
     if (!shown) {
-      toast.error("Please login first to continue 🔒");
+      toast.error("Please log in first to continue.");
       shown = true;
 
       setTimeout(() => {
