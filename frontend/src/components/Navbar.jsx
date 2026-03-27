@@ -45,15 +45,15 @@ function Navbar({ favCount, toggleMode, darkMode }) {
       initial="hidden"
       animate="visible"
     >
-      {/* 🔥 Logo (clickable) */}
-      <motion.h2
-        className="logo"
-        variants={itemVariants}
-        onClick={() => navigate("/home")}
-        style={{ cursor: "pointer" }}
-      >
-        🍲 Khana Khazana
-      </motion.h2>
+      <motion.div
+  className="logo-container"
+  variants={itemVariants}
+  onClick={() => navigate("/home")}
+  style={{ cursor: "pointer" }}
+>
+  <img src="/logo.png" alt="logo" className="logo-img" />
+  <h2 className="logo-text">Khana Khazana</h2>
+</motion.div>
 
       {/* 🔗 Links */}
       <motion.ul className="nav-links" variants={itemVariants}>
@@ -78,7 +78,6 @@ function Navbar({ favCount, toggleMode, darkMode }) {
             Favorites
             <motion.span
               className="fav-count"
-              key={favCount}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 10 }}
