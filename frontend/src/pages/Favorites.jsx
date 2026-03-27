@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { API_BASE } from "../config/api";
 
 function Favorites({ setFavCount }) {
@@ -35,6 +36,13 @@ function Favorites({ setFavCount }) {
     } catch (err) {
       console.error("[Favorites.jsx] fetch error:", err);
       console.error("[Favorites.jsx] error response:", err.response?.data);
+      toast.error("Failed to load favorites. Please try again.");
+      if (err.response?.status === 401) {
+        toast.error("Session expired or invalid token. Please log in again.");
+        localStorage.removeItem("token");
+        localStorage.removeItem("favorites");
+        window.location.href = "/";
+      }
     }
   };
 
@@ -64,6 +72,7 @@ const removeFromFavorites = useCallback(async (id) => {
       }
     } catch (err) {
       console.error("[Favorites.jsx] delete error:", err);
+      toast.error("Failed to remove favorite. Please try again.");
     }
   }, [setFavCount]);
 
@@ -110,7 +119,7 @@ const removeFromFavorites = useCallback(async (id) => {
         transition={{ duration: 0.5 }}
         style={{ marginBottom: "40px", fontSize: "32px", fontWeight: "700" }}
       >
-        Your Favorites ❤️
+        Your Favorites
       </motion.h2>
 
       {favorites.length === 0 ? (
@@ -129,7 +138,7 @@ const removeFromFavorites = useCallback(async (id) => {
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            No favorites added yet. Start adding recipes! 🍲
+            No favorites added yet. Start adding recipes!
           </motion.p>
         </motion.div>
       ) : (
@@ -166,7 +175,7 @@ const removeFromFavorites = useCallback(async (id) => {
                     whileHover="hover"
                     whileTap="tap"
                   >
-                    ✕ Remove from Favorites
+                    Remove from Favorites
                   </motion.button>
                 </div>
               </motion.div>

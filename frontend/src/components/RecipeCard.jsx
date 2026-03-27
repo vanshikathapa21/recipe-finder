@@ -38,7 +38,7 @@ function RecipeCard({ recipe, onSelect, addToFavorites }) {
           whileHover="hover"
           onClick={onSelect}
         >
-          👀 View Recipe
+          View Recipe
         </motion.button>
 
         <motion.button
@@ -50,7 +50,7 @@ function RecipeCard({ recipe, onSelect, addToFavorites }) {
             addToFavorites(recipe);
           }}
         >
-          ❤️ Favorite
+          Add Favorite
         </motion.button>
       </div>
     </motion.div>

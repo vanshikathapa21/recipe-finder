@@ -7,6 +7,7 @@ import RecipeModal from "../components/RecipeModal";
 import FavoriteModal from "../components/FavoriteModal";
 import { getRecipes } from "../services/recipeApi";
 import axios from "axios";
+import toast from "react-hot-toast";
 import { API_BASE } from "../config/api";
 
 function Home({
@@ -41,9 +42,10 @@ function Home({
         setFavorites(res.data);
         localStorage.setItem("favorites", JSON.stringify(res.data));
       } catch (err) {
-        console.log(err);
+        console.error(err);
+        toast.error("Failed to load favorites. Please try again.");
         if (err.response?.status === 401) {
-          alert("Session expired / invalid token. Please log in again.");
+          toast.error("Session expired or invalid token. Please log in again.");
           localStorage.removeItem("token");
           localStorage.removeItem("favorites");
           window.location.href = "/";
@@ -70,7 +72,7 @@ function Home({
       console.log("Fetched recipes:", result);
 
       if (!result || result.length === 0) {
-        setError("No recipes found for these ingredients 😢");
+        setError("No recipes found for these ingredients");
         setRecipes([]);
       } else {
         setRecipes(result);
@@ -107,7 +109,7 @@ function Home({
         meal.strIngredients = ingredientsList;
         setSelectedRecipe(meal);
       } else {
-        alert("No details found 😢");
+        alert("No details found");
       }
     } catch (err) {
       console.error(err);
@@ -130,7 +132,7 @@ function Home({
   try {
     console.log("Adding to favorites:", { id: recipe.id || recipe.idMeal, title: recipe.title || recipe.strMeal, image: recipe.image || recipe.strMealThumb });
     await axios.post(
-      `${API_BASE}/api/favorites`,
+      `${API_BASE}/favorites`,
       {
         id: recipe.id || recipe.idMeal,
         title: recipe.title || recipe.strMeal,
@@ -145,20 +147,20 @@ function Home({
     setFavorites(updatedFavorites);
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
 
-    alert("❤️ Saved to favorites!");
+    toast.success("Saved to favorites!");
   } catch (err) {
     console.error("Error adding to favorites:", err);
     const errorMessage = err.response?.data?.message || err.response?.data?.error || "Error saving recipe";
 
     if (err.response?.status === 401) {
-      alert("Session expired or invalid authentication token. Please log in again.");
+      toast.error("Session expired or invalid authentication token. Please log in again.");
       localStorage.removeItem("token");
       localStorage.removeItem("favorites");
       window.location.href = "/"; // redirect to login
       return;
     }
 
-    alert(`Error: ${errorMessage}`);
+    toast.error(`Error: ${errorMessage}`);
   }
 
   setFavoriteModalRecipe(null);
@@ -203,7 +205,7 @@ function Home({
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <h1>🍲 Khana Khazana</h1>
-        <p>Discover amazing recipes with ingredients you have</p>
+        <p>Taste. Cook. Enjoy.</p>
       </motion.div>
 
       <motion.div
@@ -244,7 +246,7 @@ function Home({
                 animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
               >
-                ⏳ Loading recipes...
+                Loading recipes...
               </motion.span>
             </motion.div>
           )}

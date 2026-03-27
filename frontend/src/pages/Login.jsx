@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { API_BASE } from "../config/api";
+import toast from "react-hot-toast";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -9,29 +10,37 @@ function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
+    let loadingToast ;
     try {
       const loginUrl = `${API_BASE}/auth/login`;
       console.log("[Login.jsx] loginUrl:", loginUrl);
+      loadingToast = toast.loading("Logging in...");
       const res = await axios.post(loginUrl, {
         email,
         password,
       });
 
       if (!res.data.token) {
-        const message = res.data?.message || "Login failed. Please check your credentials.";
-        alert(message);
-        localStorage.removeItem("token");
+        toast.dismiss(loadingToast);
+        const errorMessage = res.data.message || "Invalid credentials";
+        toast.error(errorMessage);
         return;
       }
 
       localStorage.setItem("token", res.data.token);
-      alert("Login successful");
+      toast.dismiss(loadingToast);
+      toast.success("Login successful");
 
       navigate("/home", { replace: true });
     } catch (err) {
       console.error("[Login.jsx] login error", err);
-      const message = err.response?.data?.message || err.message || "Login failed";
-      alert(message);
+      const message =
+        err.response?.data?.message ||
+        "Invalid email or password";
+
+      toast.dismiss(loadingToast); 
+      toast.error(message);
+
     }
   };
 

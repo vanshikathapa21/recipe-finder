@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { API_BASE } from "../config/api";
+import toast from "react-hot-toast";
 
 function Signup() {
   const [email, setEmail] = useState("");
@@ -12,22 +13,25 @@ function Signup() {
     try {
       const signupUrl = `${API_BASE}/auth/signup`;
       console.log("[Signup.jsx] signupUrl:", signupUrl);
+      const loadingToast = toast.loading("Creating account...");
       const res = await axios.post(signupUrl, {
         email,
         password,
       });
 
       if (res.status === 201 || res.data.message === "Signup successful") {
-        alert("Signup successful. Please log in.");
+        toast.dismiss(loadingToast);
+        toast.success("Signup successful. Please log in.");
         navigate("/", { replace: true });
         return;
       }
 
-      alert(res.data.message || "Unable to sign up. Try again.");
+      toast.dismiss(loadingToast);
+      toast.error(res.data.message || "Unable to sign up. Try again.");
     } catch (err) {
       console.error(err);
       const msg = err.response?.data?.message || "Failed to sign up.";
-      alert(msg);
+      toast.error(msg);
     }
   };
 

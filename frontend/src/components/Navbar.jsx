@@ -1,14 +1,13 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 
 function Navbar({ favCount, toggleMode, darkMode }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-  localStorage.removeItem("token"); 
-  navigate("/"); 
-};
+    localStorage.removeItem("token");
+    navigate("/");
+  };
 
   const navVariants = {
     hidden: { opacity: 0, y: -20 },
@@ -35,7 +34,7 @@ function Navbar({ favCount, toggleMode, darkMode }) {
 
   const buttonVariants = {
     idle: { scale: 1 },
-    hover: { scale: 1.05, transition: { duration: 0.2 } },
+    hover: { scale: 1.08 },
     tap: { scale: 0.95 },
   };
 
@@ -46,55 +45,73 @@ function Navbar({ favCount, toggleMode, darkMode }) {
       initial="hidden"
       animate="visible"
     >
-      <motion.h2 className="logo" variants={itemVariants}>
+      {/* 🔥 Logo (clickable) */}
+      <motion.h2
+        className="logo"
+        variants={itemVariants}
+        onClick={() => navigate("/home")}
+        style={{ cursor: "pointer" }}
+      >
         🍲 Khana Khazana
       </motion.h2>
 
+      {/* 🔗 Links */}
       <motion.ul className="nav-links" variants={itemVariants}>
         <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <NavLink to="/home" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+          <NavLink
+            to="/home"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+          >
             Home
           </NavLink>
         </motion.li>
 
         <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <NavLink to="/favorites" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-            Favorites{" "}
+          <NavLink
+            to="/favorites"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+          >
+            Favorites
             <motion.span
+              className="fav-count"
               key={favCount}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 10 }}
             >
-              ({favCount})
+              {favCount}
             </motion.span>
           </NavLink>
         </motion.li>
+      </motion.ul>
 
- <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
-          </button>
-        </motion.li>
-     </motion.ul>
-
-      <motion.button
-        className="toggle-btn"
-        onClick={toggleMode}
-        variants={buttonVariants}
-        whileHover="hover"
-        whileTap="tap"
-      >
-        <motion.span
-          key={darkMode ? "dark" : "light"}
-          initial={{ rotate: -180, opacity: 0 }}
-          animate={{ rotate: 0, opacity: 1 }}
-          exit={{ rotate: 180, opacity: 0 }}
-          transition={{ duration: 0.3 }}
+      {/* Actions */}
+      <div className="nav-actions">
+        <motion.button
+          className="toggle-btn"
+          onClick={toggleMode}
+          variants={buttonVariants}
+          whileHover="hover"
+          whileTap="tap"
+          title={darkMode ? "Light mode" : "Dark mode"}
         >
-          {darkMode ? "☀️ Light" : "🌙 Dark"}
-        </motion.span>
-      </motion.button>
+          {darkMode ? "☀" : "☽"}
+        </motion.button>
+
+        <motion.button
+          className="logout-btn"
+          onClick={handleLogout}
+          variants={buttonVariants}
+          whileHover="hover"
+          whileTap="tap"
+        >
+          Logout
+        </motion.button>
+      </div>
     </motion.nav>
   );
 }

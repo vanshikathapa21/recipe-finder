@@ -11,6 +11,8 @@ import Favorites from "./pages/Favorites";
 
 import "./styles/main.css";
 
+import { Toaster} from "react-hot-toast";
+
 function App() {
   // Theme state
   const [darkMode, setDarkMode] = useState(false);
@@ -68,6 +70,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="app">
+        <Toaster position="top-right" />
         <Navbar favCount={favCount} toggleMode={toggleMode} darkMode={darkMode} />
 
         <Routes>

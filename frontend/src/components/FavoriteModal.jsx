@@ -51,7 +51,7 @@ function FavoriteModal({ recipe, onConfirm, onCancel, isAlreadyFavorite }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.3 }}
         >
-          <h2>❤️ {isAlreadyFavorite ? "Already Favorited!" : "Add to Favorites"}</h2>
+          <h2>{isAlreadyFavorite ? "Already Favorited!" : "Add to Favorites"}</h2>
         </motion.div>
 
         <motion.div
@@ -67,7 +67,7 @@ function FavoriteModal({ recipe, onConfirm, onCancel, isAlreadyFavorite }) {
 
           <p className="favorite-modal-message">
             {isAlreadyFavorite 
-              ? "This recipe is already in your favorites! 😄" 
+              ? "This recipe is already in your favorites!" 
               : "Are you sure you want to add this recipe to your favorites?"}
           </p>
         </motion.div>
