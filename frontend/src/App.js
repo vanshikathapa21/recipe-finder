@@ -16,6 +16,9 @@ import { Toaster} from "react-hot-toast";
 function App() {
   // Theme state
   const [darkMode, setDarkMode] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    Boolean(localStorage.getItem("token"))
+  );
 
   // Favorites count  
   const [favCount, setFavCount] = useState(0);
@@ -33,6 +36,10 @@ function App() {
   useEffect(() => {
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
     setFavCount(favorites.length);
+  }, []);
+
+  useEffect(() => {
+    setIsLoggedIn(Boolean(localStorage.getItem("token")));
   }, []);
 
   // Dark mode effect
@@ -71,11 +78,20 @@ function App() {
     <BrowserRouter>
       <div className="app">
         <Toaster position="top-right" />
-        <Navbar favCount={favCount} toggleMode={toggleMode} darkMode={darkMode} />
+        <Navbar
+          favCount={favCount}
+          toggleMode={toggleMode}
+          darkMode={darkMode}
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
+        />
 
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<Login />} />
+          <Route
+            path="/"
+            element={<Login setIsLoggedIn={setIsLoggedIn} />}
+          />
           <Route path="/signup" element={<Signup />} />
 
           {/* Protected Home route */}

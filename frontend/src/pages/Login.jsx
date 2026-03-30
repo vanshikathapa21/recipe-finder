@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { API_BASE } from "../config/api";
 import toast from "react-hot-toast";
 
-function Login() {
+function Login({ setIsLoggedIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -28,6 +28,7 @@ function Login() {
       }
 
       localStorage.setItem("token", res.data.token);
+      setIsLoggedIn(true);
       toast.dismiss(loadingToast);
       toast.success("Login successful");
 
