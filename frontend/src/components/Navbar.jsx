@@ -1,11 +1,19 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-function Navbar({ favCount, toggleMode, darkMode }) {
+function Navbar({
+  favCount,
+  toggleMode,
+  darkMode,
+  isLoggedIn,
+  setIsLoggedIn,
+}) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("favorites");
+    setIsLoggedIn(false);
     navigate("/");
   };
 
@@ -17,8 +25,8 @@ function Navbar({ favCount, toggleMode, darkMode }) {
       transition: {
         duration: 0.5,
         ease: "easeOut",
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
+        staggerChildren: 0.08,
+        delayChildren: 0.08,
       },
     },
   };
@@ -34,9 +42,11 @@ function Navbar({ favCount, toggleMode, darkMode }) {
 
   const buttonVariants = {
     idle: { scale: 1 },
-    hover: { scale: 1.08 },
-    tap: { scale: 0.95 },
+    hover: { scale: 1.03 },
+    tap: { scale: 0.98 },
   };
+
+  const goHome = () => navigate("/home");
 
   return (
     <motion.nav
@@ -45,71 +55,91 @@ function Navbar({ favCount, toggleMode, darkMode }) {
       initial="hidden"
       animate="visible"
     >
-      <motion.div
-  className="logo-container"
-  variants={itemVariants}
-  onClick={() => navigate("/home")}
-  style={{ cursor: "pointer" }}
->
-  <img src="/logo.png" alt="logo" className="logo-img" />
-  <h2 className="logo-text">Khana Khazana</h2>
-</motion.div>
-
-      {/* 🔗 Links */}
-      <motion.ul className="nav-links" variants={itemVariants}>
-        <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <NavLink
-            to="/home"
-            className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
-            }
+      <div className="navbar-inner">
+        <motion.div className="navbar-side navbar-side-left" variants={itemVariants}>
+          <motion.button
+            className="toggle-btn"
+            onClick={toggleMode}
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
+            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
           >
-            Home
-          </NavLink>
-        </motion.li>
+            <span className="toggle-btn-text">
+              {darkMode ? "Light mode" : "Dark mode"}
+            </span>
+          </motion.button>
 
-        <motion.li whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <NavLink
-            to="/favorites"
-            className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
-            }
-          >
-            Favorites
-            <motion.span
-              className="fav-count"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 10 }}
+          {isLoggedIn && (
+            <motion.button
+              className="logout-btn"
+              onClick={handleLogout}
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
             >
-              {favCount}
-            </motion.span>
-          </NavLink>
-        </motion.li>
-      </motion.ul>
+              Log out
+            </motion.button>
+          )}
+        </motion.div>
 
-      {/* Actions */}
-      <div className="nav-actions">
-        <motion.button
-          className="toggle-btn"
-          onClick={toggleMode}
-          variants={buttonVariants}
-          whileHover="hover"
-          whileTap="tap"
-          title={darkMode ? "Light mode" : "Dark mode"}
-        >
-          {darkMode ? "☀" : "☽"}
-        </motion.button>
+        <motion.ul className="nav-links" variants={itemVariants}>
+          <motion.li whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}>
+            <NavLink
+              to="/home"
+              className={({ isActive }) =>
+                isActive ? "nav-link active" : "nav-link"
+              }
+            >
+              Home
+            </NavLink>
+          </motion.li>
 
-        <motion.button
-          className="logout-btn"
-          onClick={handleLogout}
-          variants={buttonVariants}
-          whileHover="hover"
-          whileTap="tap"
+          {isLoggedIn && (
+            <motion.li whileHover={{ y: -1 }} whileTap={{ scale: 0.98 }}>
+              <NavLink
+                to="/favorites"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+              >
+                Favorites
+                <motion.span
+                  className="fav-count"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 14 }}
+                >
+                  {favCount}
+                </motion.span>
+              </NavLink>
+            </motion.li>
+          )}
+        </motion.ul>
+
+        <motion.div
+          className="logo-container"
+          variants={itemVariants}
+          onClick={goHome}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              goHome();
+            }
+          }}
+          role="button"
+          tabIndex={0}
         >
-          Logout
-        </motion.button>
+          <div className="brand-copy">
+            <span className="brand-eyebrow">Smart Recipe Search</span>
+            <h2 className="logo-text">Khana Khazana</h2>
+          </div>
+
+          <div className="brand-mark">
+            <img src="/logo.png" alt="Khana Khazana logo" className="logo-img" />
+          </div>
+        </motion.div>
       </div>
     </motion.nav>
   );
