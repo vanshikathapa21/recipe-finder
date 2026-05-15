@@ -1,12 +1,15 @@
+import { API_BASE } from "../config/api";
+
 export async function getRecipes(ingredients) {
   try {
     if (!ingredients || ingredients.length === 0) return [];
 
-    
     const ingredientString = ingredients.join(",");
     
+    // API_BASE includes /api at the end, so we replace it to get the root URL for /recipes
+    const baseUrl = API_BASE.replace(/\/api$/, "");
     const res = await fetch(
-      `https://recipe-finder-pjni.onrender.com/recipes?ingredients=${encodeURIComponent(ingredientString)}`
+      `${baseUrl}/recipes?ingredients=${encodeURIComponent(ingredientString)}`
     );
 
     const data = await res.json();

@@ -23,14 +23,7 @@ function App() {
   // Favorites count  
   const [favCount, setFavCount] = useState(0);
 
-  // Shared state for Home/Favorites page
-  const [ingredients, setIngredients] = useState([]);
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [favoriteModalRecipe, setFavoriteModalRecipe] = useState(null);
+
 
   // Initialize favorites count
   useEffect(() => {
@@ -54,25 +47,6 @@ function App() {
   const toggleMode = useCallback(() => {
     setDarkMode(!darkMode);
   }, [darkMode]);
-
-  // Shared state object
-  const sharedState = {
-    ingredients,
-    setIngredients,
-    recipes,
-    setRecipes,
-    loading,
-    setLoading,
-    error,
-    setError,
-    selectedRecipe,
-    setSelectedRecipe,
-    hasSearched,
-    setHasSearched,
-    favoriteModalRecipe,
-    setFavoriteModalRecipe,
-    setFavCount,
-  };
 
   return (
     <BrowserRouter>
@@ -99,7 +73,7 @@ function App() {
             path="/home"
             element={
               <ProtectedRoute>
-                <Home {...sharedState} />
+                <Home setFavCount={setFavCount} />
               </ProtectedRoute>
             }
           />
@@ -109,7 +83,7 @@ function App() {
             path="/favorites"
             element={
               <ProtectedRoute>
-                <Favorites {...sharedState} />
+                <Favorites setFavCount={setFavCount} />
               </ProtectedRoute>
             }
           />

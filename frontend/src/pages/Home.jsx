@@ -10,24 +10,14 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { API_BASE } from "../config/api";
 
-function Home({
-  ingredients,
-  setIngredients,
-  recipes,
-  setRecipes,
-  loading,
-  setLoading,
-  error,
-  setError,
-  selectedRecipe,
-  setSelectedRecipe,
-  hasSearched,
-  setHasSearched,
-  favoriteModalRecipe,
-  setFavoriteModalRecipe,
-  setFavCount,
-
-}) {
+function Home({ setFavCount }) {
+  const [ingredients, setIngredients] = useState([]);
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [favoriteModalRecipe, setFavoriteModalRecipe] = useState(null);
 
    const token = localStorage.getItem("token");
    const [favorites, setFavorites] = useState([]);
@@ -41,6 +31,7 @@ function Home({
         });
         setFavorites(res.data);
         localStorage.setItem("favorites", JSON.stringify(res.data));
+        if (setFavCount) setFavCount(res.data.length);
       } catch (err) {
         console.error(err);
         toast.error("Failed to load favorites. Please try again.");
@@ -146,6 +137,7 @@ function Home({
     const updatedFavorites = [...favorites, favRecipe];
     setFavorites(updatedFavorites);
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+    if (setFavCount) setFavCount(updatedFavorites.length);
 
     toast.success("Saved to favorites!");
   } catch (err) {
